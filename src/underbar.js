@@ -350,6 +350,22 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+	  var alreadyCalled = false;
+	  return function(){
+		if(alreadyCalled){
+			if(result != func.apply(this, arguments )){
+				alreadyCalled = true;
+				var result = func.apply(this, arguments);
+				return result;
+			}else{
+				alreadyCalled = true;
+				return result;
+		  	};
+		}else{
+			var result = func.apply(this, arguments);
+			return result;
+		};
+	};
   };
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -358,7 +374,16 @@
   // The arguments for the original function are passed after the wait
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
+ 
   _.delay = function(func, wait) {
+	  var args = [];
+	  for(var x = 0; x < arguments.length; x++){
+		args[x] = arguments[x];
+	  }
+	  args = args.slice(2);
+	  setInterval(function(){
+		  func.apply(null, args)
+	  }, wait);
   };
 
 
@@ -373,6 +398,17 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+	  var rArray = [];
+	  for(var x = 0; x < array.length; x++){
+		  rArray[x] = array[x];
+	  }
+	  for(var x = 0; x < array.length; x++){
+		  var i = Math.floor(Math.random() * (x + 1));
+		  var temp = rArray[x];
+		  rArray[x] = rArray[i];
+		  rArray[i] = temp;
+	  }
+	  return rArray;
   };
 
 
