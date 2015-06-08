@@ -351,19 +351,41 @@
   // instead if possible.
   _.memoize = function(func) {
 	  var alreadyCalled = false;
-	  return function(){
-		if(alreadyCalled){
-			if(result != func.apply(this, arguments )){
-				alreadyCalled = true;
-				var result = func.apply(this, arguments);
-				return result;
-			}else{
-				alreadyCalled = true;
-				return result;
-		  	};
+	  var prevArgs = [];
+	  var curArgs = []
+	  return function(args){
+		  var temp = [];
+		for(var x = 0; x < arguments.length; x++){
+			temp.push(arguments[x]);
+			curArgs = temp;
+		};
+		if(prevArgs.toString() == curArgs.toString()){
+			null;
 		}else{
-			var result = func.apply(this, arguments);
-			return result;
+			var newResult = func.apply(null, arguments);
+			if(alreadyCalled){
+				if(result == newResult){
+					alreadyCalled = true;
+					return result;
+				}else{
+					alreadyCalled = true;
+					var result = newResult;
+					var temp = [];
+					for(var x = 0; x < arguments.length; x++){
+						temp.push(arguments[x]);
+						prevArgs = temp;
+					};
+					return result;
+			  	};
+			}else{
+				var result = newResult;
+				var temp = [];
+				for(var x = 0; x < arguments.length; x++){
+					temp.push(arguments[x]);
+					prevArgs = temp;
+				}
+				return result;
+			};
 		};
 	};
   };
