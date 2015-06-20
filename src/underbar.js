@@ -349,46 +349,48 @@
   // _.memoize should return a function that, when called, will check if it has
   // already computed the result for the given argument and return that value
   // instead if possible.
+
   _.memoize = function(func) {
-	  var alreadyCalled = false;
-	  var prevArgs = [];
-	  var curArgs = []
-	  return function(args){
-		  var temp = [];
-		for(var x = 0; x < arguments.length; x++){
-			temp.push(arguments[x]);
-			curArgs = temp;
-		};
-		if(prevArgs.toString() == curArgs.toString()){
-			null;
-		}else{
-			var newResult = func.apply(null, arguments);
-			if(alreadyCalled){
-				if(result == newResult){
-					alreadyCalled = true;
-					return result;
-				}else{
-					alreadyCalled = true;
-					var result = newResult;
-					var temp = [];
-					for(var x = 0; x < arguments.length; x++){
-						temp.push(arguments[x]);
-						prevArgs = temp;
-					};
-					return result;
-			  	};
-			}else{
-				var result = newResult;
-				var temp = [];
-				for(var x = 0; x < arguments.length; x++){
-					temp.push(arguments[x]);
-					prevArgs = temp;
-				}
-				return result;
-			};
-		};
-	};
+    var alreadyCalled = false;
+    var prevArgs = [];
+    var curArgs = []
+    return function(args){
+      var temp = [];
+    for(var x = 0; x < arguments.length; x++){
+      temp.push(arguments[x]);
+      curArgs = temp;
+    };
+    if(prevArgs.toString() == curArgs.toString()){
+      null;
+    }else{
+      var newResult = func.apply(null, arguments);
+      if(alreadyCalled){
+        if(result == newResult){
+          alreadyCalled = true;
+          return result;
+        }else{
+          alreadyCalled = true;
+          var result = newResult;
+          var temp = [];
+          for(var x = 0; x < arguments.length; x++){
+            temp.push(arguments[x]);
+            prevArgs = temp;
+          };
+          return result;
+          };
+      }else{
+        var result = newResult;
+        var temp = [];
+        for(var x = 0; x < arguments.length; x++){
+          temp.push(arguments[x]);
+          prevArgs = temp;
+        }
+        return result;
+      };
+    };
   };
+  };
+
 
   // Delays a function for the given number of milliseconds, and then calls
   // it with the arguments supplied.
@@ -445,6 +447,21 @@
   // Calls the method named by functionOrKey on each value in the list.
   // Note: You will need to learn a bit about .apply to complete this.
   _.invoke = function(collection, functionOrKey, args) {
+    var returnVal = []
+    function methodRunner(element, functionOrKey, args){
+          var holder = "'" + element + "'." +functionOrKey + "("+ args+ ")"
+          var returnVal = eval(holder);
+          return returnVal;
+        }
+    for(var x = 0; x < collection.length; x++){
+      if(typeof functionOrKey == "function"){
+        returnVal[x] = functionOrKey.apply(collection[x], args)
+      }else{
+        returnVal[x] = methodRunner(collection[x], functionOrKey, args)
+        console.log(returnVal[x])
+      }
+    }
+    return returnVal;
   };
 
   // Sort the object's values by a criterion produced by an iterator.
@@ -460,6 +477,22 @@
   // Example:
   // _.zip(['a','b','c','d'], [1,2,3]) returns [['a',1], ['b',2], ['c',3], ['d',undefined]]
   _.zip = function() {
+    var returnArray = [];
+    var count = 0
+    for(var x = 0; x < arguments.length; x++){
+      for(var y = 0; y < arguments[x].length; y++){
+        if(y > count){
+          count = y;
+        }
+      }
+    }
+    for(var x = 0; x <= count; x++){
+      returnArray[x] = [];
+      for(var y = 0; y < arguments.length; y++){
+        returnArray[x].push(arguments[y][x])
+      }
+    }
+    return returnArray;
   };
 
   // Takes a multidimensional array and converts it to a one-dimensional array.
@@ -467,6 +500,18 @@
   //
   // Hint: Use Array.isArray to check if something is an array
   _.flatten = function(nestedArray, result) {
+    var returnArray = [];
+    function flat(nestedArray, result){
+      for(var x = 0; x < nestedArray.length; x++){
+        if(Array.isArray(nestedArray[x]) && !result){
+          flat(nestedArray[x])
+        }else{
+          returnArray.push(nestedArray[x])
+        }
+      }
+    };
+    flat(nestedArray, result);
+    return returnArray;
   };
 
   // Takes an arbitrary number of arrays and produces an array that contains
