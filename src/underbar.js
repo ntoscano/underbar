@@ -449,16 +449,15 @@
   _.invoke = function(collection, functionOrKey, args) {
     var returnVal = []
     function methodRunner(element, functionOrKey, args){
-          var holder = "'" + element + "'." +functionOrKey + "("+ args+ ")"
-          var returnVal = eval(holder);
-          return returnVal;
-        }
+      var holder = "'" + element + "'." +functionOrKey + "("+ args+ ")"
+      var returnVal = eval(holder);
+      return returnVal;
+    }
     for(var x = 0; x < collection.length; x++){
       if(typeof functionOrKey == "function"){
         returnVal[x] = functionOrKey.apply(collection[x], args)
       }else{
         returnVal[x] = methodRunner(collection[x], functionOrKey, args)
-        console.log(returnVal[x])
       }
     }
     return returnVal;
@@ -469,6 +468,27 @@
   // of that string. For example, _.sortBy(people, 'name') should sort
   // an array of people by their name.
   _.sortBy = function(collection, iterator) {
+    /*
+    var returnVal = [];
+     if(typeof iterator == "function"){
+      returnVal[0] = iterator(collection[0]);
+       for(var x = 0; x < collection.length; x++){
+         var newVal = iterator(collection[x])
+         for(var y = 0; y < returnVal.length; y++){
+          console.log(y)
+          console.log(returnVal)
+          console.log(x)
+          console.log(collection.length)
+           if(newVal > returnVal[y]){
+             returnVal.splice(y, 0, newVal);
+             break;
+           }
+         }
+       }
+     }else{
+     }
+     return returnVal;
+     */
   };
 
   // Zip together two or more arrays with elements of the same index
@@ -517,11 +537,52 @@
   // Takes an arbitrary number of arrays and produces an array that contains
   // every item shared between all the passed-in arrays.
   _.intersection = function() {
+    var args = [];
+    var dubs = [];
+    for(var x = 0; x < arguments.length; x++){
+      args.push(arguments[x]);
+    }
+    var flat = _.flatten(args)
+    for(var x = 0; x < flat.length; x++){
+      var n = 0;
+      for(var y = 0; y < flat.length; y++){
+        if(flat[x] == flat[y])
+          n++;
+      }
+      if(n == arguments.length){
+        dubs.push(flat[x])
+      }
+    }
+    for(var x = 0; x < dubs.length; x++){
+      for(var y = 0; y < dubs.length; y++){
+        if(dubs[x] == dubs[y])
+          dubs.splice(y, 1)
+      }
+    }
+    return dubs;
   };
 
   // Take the difference between one array and a number of other arrays.
   // Only the elements present in just the first array will remain.
   _.difference = function(array) {
+    var dub = []
+    for(var x = 0; x < array.length; x++){
+      for(var y = 1; y < arguments.length; y++){
+        for (var z = 0; z < arguments[y].length; z++){
+          if(array[x] == arguments[y][z]){
+            dub.push(arguments[y][z])
+          }
+        }
+      }
+    }
+    for(var x = 0; x < array.length; x++){
+      for(var y = 0; y < dub.length; y++){
+        if(array[x] == dub[y]){
+          array.splice(x, 1)
+        }
+      }
+    }
+    return array;
   };
 
   // Returns a function, that, when invoked, will only be triggered at most once
